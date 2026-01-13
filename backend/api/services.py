@@ -6,10 +6,11 @@ import json
 import logging
 
 # Configure Gemini
+# Configure Gemini
 genai.configure(api_key=settings.GEMINI_API_KEY)
 
 class YouTubeService:
-    API_KEY = "AIzaSyA98duwWN_9PKaaYmPY0K9WxpzTrPaxcdU"
+    API_KEY = "AIzaSyDRnKJYR9KHNWnrITIoY2jJztBJr9RIkZg"
     
     @staticmethod
     def search_video(query):
@@ -52,8 +53,11 @@ class ContentDiscoveryService:
         Generates a full course structure using Gemini 3 Pro with JSON output.
         """
         # Using verified gemini-3-flash-preview as requested
-        # model = genai.GenerativeModel('gemini-3-pro-preview')
         model = genai.GenerativeModel('gemini-3-flash-preview') 
+        
+        # Debug API Key (safety first)
+        key_status = "Set" if settings.GEMINI_API_KEY else "Not Set"
+        print(f"DEBUG: GEMINI_API_KEY is {key_status}") 
         
         prompt = f"""
         You are an expert curriculum designer. Create a comprehensive video-based learning roadmap for "{topic}" suitable for a "{skill_level}" learner.

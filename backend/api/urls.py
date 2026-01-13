@@ -9,7 +9,7 @@ from .views import (
     DailyTaskListView, complete_task,
     NotificationListView, mark_notification_read, UserStatsView,
     generate_roadmap_ai, generate_concept_notes, generate_concept_quiz,
-    ActivityLogView, LabListCreateView, LabDetailView
+    ActivityLogView, LabListCreateView, LabDetailView, generate_certificate
 )
 
 urlpatterns = [
@@ -31,6 +31,7 @@ urlpatterns = [
     path('roadmaps/', RoadmapListCreateView.as_view(), name='roadmap_list'),
     path('roadmaps/generate/', generate_roadmap_ai, name='roadmap_generate_ai'),
     path('roadmaps/<int:pk>/', RoadmapDetailView.as_view(), name='roadmap_detail'),
+    path('roadmaps/<int:roadmap_id>/certificate/', generate_certificate, name='roadmap_certificate'),
     
     path('concepts/<int:concept_id>/complete/', mark_concept_complete, name='concept_complete'),
     path('concepts/<int:concept_id>/generate-notes/', generate_concept_notes, name='concept_generate_notes'),

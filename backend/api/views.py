@@ -536,3 +536,151 @@ class LabDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return Lab.objects.filter(user=self.request.user)
+
+
+# Certificate Generation
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import letter, landscape
+from reportlab.lib import colors
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+import io
+import hashlib
+from datetime import datetime
+import os
+
+# Get the path to static images
+STATIC_IMAGES_DIR = os.path.join(os.path.dirname(__file__), 'static', 'images')
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def generate_certificate(request, roadmap_id):
+    """
+    Generate a PDF certificate for a completed course.
+    Only available when progress is 100%.
+    """
+    try:
+        roadmap = Roadmap.objects.get(id=roadmap_id, user=request.user)
+        print(f"DEBUG Certificate: Found roadmap {roadmap_id}, progress={roadmap.progress}")
+    except Roadmap.DoesNotExist:
+        print(f"DEBUG Certificate: Roadmap {roadmap_id} not found for user {request.user}")
+        return Response({'error': 'Roadmap not found'}, status=404)
+    
+    # Check if course is completed
+    if roadmap.progress < 100:
+        return Response({'error': 'Course not completed yet. Complete all lessons to get your certificate.'}, status=400)
+    
+    # Generate unique certificate ID
+    cert_data = f"{request.user.id}-{roadmap_id}-{roadmap.course.title}"
+    cert_id = hashlib.sha256(cert_data.encode()).hexdigest()[:12].upper()
+    
+    # Create PDF in memory
+    buffer = io.BytesIO()
+    
+    # Create PDF with landscape orientation
+    p = canvas.Canvas(buffer, pagesize=landscape(letter))
+    width, height = landscape(letter)
+    
+    # Certificate background - elegant gradient effect with border
+    p.setFillColor(colors.Color(0.98, 0.98, 0.98))
+    p.rect(0, 0, width, height, fill=1, stroke=0)
+    
+    # Decorative border
+    p.setStrokeColor(colors.Color(0.2, 0.2, 0.2))
+    p.setLineWidth(3)
+    p.rect(30, 30, width-60, height-60, fill=0, stroke=1)
+    
+    # Inner border
+    p.setLineWidth(1)
+    p.rect(40, 40, width-80, height-80, fill=0, stroke=1)
+    
+    # Add SkillMeter Logo (top left corner)
+    logo_path = os.path.join(STATIC_IMAGES_DIR, 'logo.png')
+    if os.path.exists(logo_path):
+        p.drawImage(logo_path, 60, height - 85, width=50, height=50, preserveAspectRatio=True, mask='auto')
+    
+    # Add Rocketboy illustration (bottom right corner)
+    rocketboy_path = os.path.join(STATIC_IMAGES_DIR, 'Rocketboy.png')
+    if os.path.exists(rocketboy_path):
+        p.drawImage(rocketboy_path, width - 160, 50, width=100, height=100, preserveAspectRatio=True, mask='auto')
+    
+    # Header - "CERTIFICATE OF COMPLETION"
+    p.setFillColor(colors.Color(0.1, 0.1, 0.1))
+    p.setFont("Helvetica-Bold", 36)
+    p.drawCentredString(width/2, height - 100, "CERTIFICATE OF COMPLETION")
+    
+    # Decorative line
+    p.setStrokeColor(colors.Color(0.3, 0.3, 0.3))
+    p.setLineWidth(2)
+    p.line(width/2 - 200, height - 115, width/2 + 200, height - 115)
+    
+    # "This is to certify that"
+    p.setFont("Helvetica", 18)
+    p.setFillColor(colors.Color(0.3, 0.3, 0.3))
+    p.drawCentredString(width/2, height - 160, "This is to certify that")
+    
+    # User's name - prominent
+    p.setFont("Helvetica-Bold", 32)
+    p.setFillColor(colors.Color(0.1, 0.1, 0.1))
+    user_name = f"{request.user.first_name} {request.user.last_name}".strip() or request.user.username
+    p.drawCentredString(width/2, height - 210, user_name)
+    
+    # Decorative underline for name
+    p.setLineWidth(1)
+    name_width = p.stringWidth(user_name, "Helvetica-Bold", 32)
+    p.line(width/2 - name_width/2 - 20, height - 220, width/2 + name_width/2 + 20, height - 220)
+    
+    # "has successfully completed"
+    p.setFont("Helvetica", 18)
+    p.setFillColor(colors.Color(0.3, 0.3, 0.3))
+    p.drawCentredString(width/2, height - 260, "has successfully completed the course")
+    
+    # Course title
+    p.setFont("Helvetica-Bold", 24)
+    p.setFillColor(colors.Color(0.15, 0.15, 0.15))
+    course_title = roadmap.course.title
+    # Truncate if too long
+    if len(course_title) > 50:
+        course_title = course_title[:47] + "..."
+    p.drawCentredString(width/2, height - 305, f'"{course_title}"')
+    
+    # Completion date
+    p.setFont("Helvetica", 14)
+    p.setFillColor(colors.Color(0.4, 0.4, 0.4))
+    completion_date = roadmap.last_accessed_at.strftime("%B %d, %Y") if roadmap.last_accessed_at else datetime.now().strftime("%B %d, %Y")
+    p.drawCentredString(width/2, height - 350, f"Completed on {completion_date}")
+    
+    # Certificate ID
+    p.setFont("Helvetica", 10)
+    p.setFillColor(colors.Color(0.5, 0.5, 0.5))
+    p.drawCentredString(width/2, 80, f"Certificate ID: {cert_id}")
+    
+    # SkillMeter branding
+    p.setFont("Helvetica-Bold", 14)
+    p.setFillColor(colors.Color(0.2, 0.2, 0.2))
+    p.drawCentredString(width/2, 55, "SkillMeter AI Learning Platform")
+    
+    # Signature line (left)
+    p.setLineWidth(1)
+    p.line(width/2 - 250, 130, width/2 - 50, 130)
+    p.setFont("Helvetica", 10)
+    p.drawCentredString(width/2 - 150, 115, "Platform Director")
+    
+    # Signature line (right)
+    p.line(width/2 + 50, 130, width/2 + 250, 130)
+    p.drawCentredString(width/2 + 150, 115, "Date of Issue")
+    
+    p.showPage()
+    p.save()
+    
+    # Get PDF from buffer
+    buffer.seek(0)
+    
+    # Create response
+    response = HttpResponse(buffer, content_type='application/pdf')
+    safe_title = roadmap.course.title.replace(' ', '_')[:30]
+    response['Content-Disposition'] = f'attachment; filename="SkillMeter_Certificate_{safe_title}.pdf"'
+    
+    return response

@@ -6,12 +6,60 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { useLearning } from '@/contexts/LearningContext';
-import { PlayCircle, FileText, CheckCircle2, Circle, Clock, ArrowRight } from 'lucide-react';
+import { PlayCircle, FileText, CheckCircle2, Circle, Clock, ArrowRight, Download, Award } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/contexts/AuthContext';
+import Certificate from '@/components/Certificate';
+import html2canvas from 'html2canvas';
+import { useRef, useState } from 'react';
+
 export default function Roadmap() {
   const { currentRoadmap, selectConcept } = useLearning();
+  const { user } = useAuth();
   const navigate = useNavigate();
+  const certificateRef = useRef(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [showCertificate, setShowCertificate] = useState(false);
+
+  const handleDownloadCertificate = async () => {
+    if (!currentRoadmap) return;
+
+    setIsGenerating(true);
+    setShowCertificate(true);
+
+    // Wait for the certificate to render
+    setTimeout(async () => {
+      try {
+        if (certificateRef.current) {
+          const canvas = await html2canvas(certificateRef.current, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff'
+          });
+
+          const link = document.createElement('a');
+          link.download = `SkillMeter_Certificate_${currentRoadmap.course.title.replace(/\s+/g, '_')}.png`;
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+        }
+      } catch (error) {
+        console.error('Certificate generation error:', error);
+        alert('Could not generate certificate. Please try again.');
+      } finally {
+        setIsGenerating(false);
+        setShowCertificate(false);
+      }
+    }, 500);
+  };
+
+  // Generate certificate data
+  const userName = user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.username : 'Learner';
+  const courseTitle = currentRoadmap?.course?.title || 'Course';
+  const completionDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const certificateId = currentRoadmap ? `SM-${currentRoadmap.id}-${Date.now().toString(36).toUpperCase()}` : 'SM-XXX';
+
   if (!currentRoadmap) {
     return (<DashboardLayout>
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
@@ -42,9 +90,21 @@ export default function Roadmap() {
               </div>
               <Progress value={progress} className="h-2" />
             </div>
-            <Button onClick={() => navigate('/learn')}>
-              Continue <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            <div className="flex items-center gap-2">
+              {progress === 100 && (
+                <Button
+                  onClick={handleDownloadCertificate}
+                  variant="outline"
+                  className="border-2 border-black hover:bg-black hover:text-white transition-all"
+                >
+                  <Award className="mr-2 h-4 w-4" />
+                  Certificate
+                </Button>
+              )}
+              <Button onClick={() => navigate('/learn')}>
+                Continue <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </motion.div>
@@ -93,6 +153,19 @@ export default function Roadmap() {
           </Accordion>
         </CardContent>
       </Card>
+
+      {/* Hidden Certificate for html2canvas capture */}
+      {showCertificate && (
+        <div className="fixed top-[-9999px] left-[-9999px]">
+          <Certificate
+            ref={certificateRef}
+            userName={userName}
+            courseTitle={courseTitle}
+            completionDate={completionDate}
+            certificateId={certificateId}
+          />
+        </div>
+      )}
     </div>
   </DashboardLayout>);
 }
