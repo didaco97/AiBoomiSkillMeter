@@ -178,13 +178,14 @@ export function LearningProvider({ children }) {
 
     // Select a specific concept to view in Learn page
     const selectConcept = (chapterIndex, conceptIndex) => {
-        if (currentRoadmap) {
-            setCurrentRoadmap({
-                ...currentRoadmap,
+        setCurrentRoadmap(prev => {
+            if (!prev) return null;
+            return {
+                ...prev,
                 currentChapter: chapterIndex,
                 currentConcept: conceptIndex
-            });
-        }
+            };
+        });
     };
 
     const unreadNotifications = notifications.filter(n => !n.read).length;

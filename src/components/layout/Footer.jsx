@@ -6,9 +6,7 @@ export function Footer() {
         {/* Brand */}
         <div className="col-span-2 md:col-span-1">
           <Link to="/" className="flex items-center gap-2 mb-4">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-heading font-bold text-sm">
-              S
-            </div>
+            <img src="/logo.png" alt="SkillMeter" className="h-8 w-8 object-contain" />
             <span className="font-heading font-semibold text-lg">SkillMeter</span>
           </Link>
           <p className="text-sm text-muted-foreground">

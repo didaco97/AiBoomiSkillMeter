@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Plus, Trash2, FolderOpen, Save, FileCode } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -70,17 +71,17 @@ export function LabSidebar({ currentLabId, onSelectLab, onNewLab, onSaveLab }) {
     };
 
     return (
-        <div className="w-64 bg-[#1e1e1e] border-r border-[#333] flex flex-col h-full">
-            <div className="p-4 border-b border-[#333]">
-                <h2 className="text-lg font-semibold text-white mb-2">My Labs</h2>
+        <div className="w-64 bg-sidebar-background border-r border-sidebar-border flex flex-col h-full shrink-0">
+            <div className="p-4 border-b border-sidebar-border">
+                <h2 className="text-lg font-bold text-sidebar-foreground mb-2">My Labs</h2>
                 <div className="flex gap-2">
                     <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
                         <DialogTrigger asChild>
-                            <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-700 text-white gap-2">
+                            <Button size="sm" className="w-full bg-sidebar-foreground text-sidebar-background hover:bg-sidebar-foreground/90 gap-2 border border-transparent rounded-none">
                                 <Plus className="w-4 h-4" /> New Lab
                             </Button>
                         </DialogTrigger>
-                        <DialogContent>
+                        <DialogContent className="rounded-none border-border">
                             <DialogHeader>
                                 <DialogTitle>Create New Lab</DialogTitle>
                                 <DialogDescription>
@@ -94,11 +95,11 @@ export function LabSidebar({ currentLabId, onSelectLab, onNewLab, onSaveLab }) {
                                     value={newLabName}
                                     onChange={(e) => setNewLabName(e.target.value)}
                                     placeholder="e.g., Python Algo Practice"
-                                    className="mt-2"
+                                    className="mt-2 rounded-none border-sidebar-border focus:ring-0 focus:border-sidebar-foreground"
                                 />
                             </div>
                             <DialogFooter>
-                                <Button onClick={handleCreate}>Create</Button>
+                                <Button onClick={handleCreate} className="rounded-none">Create</Button>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
@@ -106,7 +107,7 @@ export function LabSidebar({ currentLabId, onSelectLab, onNewLab, onSaveLab }) {
                     <Button
                         size="sm"
                         variant="outline"
-                        className="bg-green-600 hover:bg-green-700 text-white border-0 gap-2 w-full"
+                        className="bg-transparent text-sidebar-foreground border-sidebar-foreground hover:bg-sidebar-foreground hover:text-sidebar-background gap-2 w-full rounded-none"
                         onClick={onSaveLab}
                         disabled={!currentLabId}
                     >
@@ -121,25 +122,30 @@ export function LabSidebar({ currentLabId, onSelectLab, onNewLab, onSaveLab }) {
                         <div
                             key={lab.id}
                             onClick={() => onSelectLab(lab)}
-                            className={`
-                                group flex items-center justify-between p-2 rounded-md cursor-pointer transition-colors
-                                ${currentLabId === lab.id ? "bg-[#2d2d2d] text-white" : "text-gray-400 hover:bg-[#2d2d2d] hover:text-white"}
-                            `}
+                            className={cn(
+                                "group flex items-center justify-between p-2 cursor-pointer transition-colors border border-transparent select-none",
+                                currentLabId === lab.id
+                                    ? "bg-sidebar-foreground text-sidebar-background" // Active: Black BG, White Text
+                                    : "text-muted-foreground hover:text-sidebar-foreground hover:border-sidebar-foreground" // Hover: Text Black, Border Black
+                            )}
                         >
                             <div className="flex items-center gap-2 overflow-hidden">
                                 <FileCode className="w-4 h-4 shrink-0" />
-                                <span className="truncate text-sm">{lab.name}</span>
+                                <span className="truncate text-sm font-medium">{lab.name}</span>
                             </div>
                             <button
                                 onClick={(e) => handleDelete(e, lab.id)}
-                                className="opacity-0 group-hover:opacity-100 p-1 hover:text-red-400 transition-opacity"
+                                className={cn(
+                                    "p-1 transition-opacity",
+                                    currentLabId === lab.id ? "hover:text-red-400" : "opacity-0 group-hover:opacity-100 hover:text-red-600"
+                                )}
                             >
                                 <Trash2 className="w-3 h-3" />
                             </button>
                         </div>
                     ))}
                     {labs.length === 0 && !isLoading && (
-                        <div className="text-center text-gray-500 text-sm mt-4">
+                        <div className="text-center text-muted-foreground text-sm mt-4 italic">
                             No saved labs yet.
                         </div>
                     )}

@@ -448,11 +448,9 @@ def generate_roadmap_ai(request):
             # notes = NotesGeneratorService.generate_notes(concept_data['title'], concept_data.get('description', ''))
             
             # Construct Search URL for video
-            if 'video_url' in concept_data and concept_data['video_url']:
-                 video_url = concept_data['video_url']
-            else:
-                 query = concept_data.get('video_query', concept_data['title'])
-                 video_url = f"https://www.youtube.com/results?search_query={query.replace(' ', '+')}"
+            # Construct Search URL for video (AI models hallucinate URLs, so we use search queries)
+            query = concept_data.get('video_search_query', concept_data.get('title', ''))
+            video_url = f"https://www.youtube.com/results?search_query={query.replace(' ', '+')}"
             
             concept = Concept.objects.create(
                 chapter=chapter,
@@ -479,8 +477,8 @@ def generate_roadmap_ai(request):
     roadmap = Roadmap.objects.create(
         user=request.user,
         course=course,
-        current_chapter=1,
-        current_concept=1
+        current_chapter=0,
+        current_concept=0
     )
     
     serializer = RoadmapSerializer(roadmap)

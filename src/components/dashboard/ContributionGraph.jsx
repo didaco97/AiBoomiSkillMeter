@@ -67,7 +67,7 @@ export function ContributionGraph() {
     };
 
     return (
-        <Card>
+        <Card className="rounded-none border-2 border-black shadow-[6px_6px_0px_0px_#000]">
             <CardHeader className="pb-2">
                 <CardTitle className="text-lg">Learning Activity</CardTitle>
             </CardHeader>
@@ -122,9 +122,9 @@ export function ContributionGraph() {
                                             <TooltipProvider key={dateStr}>
                                                 <Tooltip>
                                                     <TooltipTrigger>
-                                                        <div className={`w-[10px] h-[10px] rounded-sm ${getColor(count)} hover:ring-1 hover:ring-ring transition-all`} />
+                                                        <div className={`w-[10px] h-[10px] rounded-none border-[0.5px] border-black/10 ${getColor(count)} hover:ring-1 hover:ring-black transition-all`} />
                                                     </TooltipTrigger>
-                                                    <TooltipContent>
+                                                    <TooltipContent className="rounded-none border border-black bg-white text-black">
                                                         <p>{count} lessons on {format(day, 'MMM d, yyyy')}</p>
                                                     </TooltipContent>
                                                 </Tooltip>
@@ -138,10 +138,10 @@ export function ContributionGraph() {
                         {/* Legend */}
                         <div className="flex items-center gap-1 mt-2 text-xs text-muted-foreground justify-end">
                             <span>Less</span>
-                            <div className="w-[10px] h-[10px] rounded-sm bg-muted/30" />
-                            <div className="w-[10px] h-[10px] rounded-sm bg-emerald-300" />
-                            <div className="w-[10px] h-[10px] rounded-sm bg-emerald-500" />
-                            <div className="w-[10px] h-[10px] rounded-sm bg-emerald-600" />
+                            <div className="w-[10px] h-[10px] rounded-none bg-muted/30" />
+                            <div className="w-[10px] h-[10px] rounded-none bg-emerald-300" />
+                            <div className="w-[10px] h-[10px] rounded-none bg-emerald-500" />
+                            <div className="w-[10px] h-[10px] rounded-none bg-emerald-600" />
                             <span>More</span>
                         </div>
                     </div>

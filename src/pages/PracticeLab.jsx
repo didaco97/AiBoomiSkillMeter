@@ -62,10 +62,10 @@ export default function PracticeLab() {
 
     return (
         <DashboardLayout>
-            <div className="flex h-[calc(100vh-100px)]">
+            <div className="flex h-[calc(100vh-100px)] gap-6">
                 {/* Sidebar */}
-                <div className="hidden lg:block h-full">
-                    <div className="h-full rounded-xl overflow-hidden border border-border bg-card">
+                <div className="hidden lg:block h-full sidebar-container">
+                    <div className="h-full overflow-hidden bg-card border-2 border-black rounded-none shadow-[6px_6px_0px_0px_#000]">
                         <LabSidebar
                             currentLabId={currentLabId}
                             onSelectLab={handleSelectLab}
@@ -86,7 +86,7 @@ export default function PracticeLab() {
                         </div>
                     </div>
 
-                    <div className="flex-1 bg-card border border-border rounded-xl p-4 overflow-hidden flex flex-col">
+                    <div className="flex-1 bg-card border-2 border-black rounded-none shadow-[6px_6px_0px_0px_#000] p-4 overflow-hidden flex flex-col">
                         <CodeEditor
                             language={language}
                             setLanguage={setLanguage}

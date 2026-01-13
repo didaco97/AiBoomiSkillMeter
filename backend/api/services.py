@@ -35,7 +35,7 @@ class ContentDiscoveryService:
                         {{
                             "title": "Concept Title",
                             "description": "Concept description",
-                            "video_url": "https://www.youtube.com/watch?v=...", 
+                            "video_search_query": "Specific search term for this concept", 
                             "duration_minutes": 15
                         }}
                     ]

@@ -50,34 +50,34 @@ export default function Roadmap() {
       </motion.div>
 
       {/* Chapters */}
-      <Card>
+      <Card className="rounded-none border-2 border-black shadow-[6px_6px_0px_0px_#000]">
         <CardHeader>
           <CardTitle>Course Outline</CardTitle>
           <CardDescription>{course.chapters.length} chapters • {course.chapters.reduce((acc, ch) => acc + ch.concepts.length, 0)} concepts</CardDescription>
         </CardHeader>
         <CardContent>
-          <Accordion type="multiple" className="space-y-2">
+          <Accordion type="multiple" className="space-y-4">
             {course.chapters.map((chapter, chapterIndex) => {
               const completedConcepts = chapter.concepts.filter(c => c.completed).length;
               const chapterProgress = Math.round((completedConcepts / chapter.concepts.length) * 100);
-              return (<AccordionItem key={chapter.id} value={chapter.id} className="border rounded-lg px-4">
+              return (<AccordionItem key={chapter.id} value={chapter.id} className="border-2 border-black rounded-none px-4">
                 <AccordionTrigger className="hover:no-underline">
                   <div className="flex items-center gap-4 flex-1">
-                    <div className={cn('h-8 w-8 rounded-full flex items-center justify-center text-sm font-medium', chapterProgress === 100 ? 'bg-success text-success-foreground' : 'bg-muted')}>
+                    <div className={cn('h-8 w-8 rounded-none border border-black flex items-center justify-center text-sm font-medium', chapterProgress === 100 ? 'bg-black text-white' : 'bg-transparent text-black')}>
                       {chapterProgress === 100 ? <CheckCircle2 className="h-4 w-4" /> : chapterIndex + 1}
                     </div>
                     <div className="text-left flex-1">
-                      <h3 className="font-medium">{chapter.title}</h3>
+                      <h3 className="font-bold">{chapter.title}</h3>
                       <p className="text-sm text-muted-foreground">{completedConcepts}/{chapter.concepts.length} completed</p>
                     </div>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="pt-2 pb-4">
                   <div className="space-y-2 ml-12">
-                    {chapter.concepts.map((concept, conceptIndex) => (<div key={concept.id} onClick={() => { selectConcept(chapterIndex, conceptIndex); navigate('/learn'); }} className={cn('flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors', concept.completed ? 'bg-success/10' : 'bg-muted/50 hover:bg-muted')}>
-                      {concept.completed ? (<CheckCircle2 className="h-5 w-5 text-success" />) : (<Circle className="h-5 w-5 text-muted-foreground" />)}
+                    {chapter.concepts.map((concept, conceptIndex) => (<div key={concept.id} onClick={() => { selectConcept(chapterIndex, conceptIndex); navigate('/learn'); }} className={cn('flex items-center gap-3 p-3 rounded-none border border-transparent hover:border-black cursor-pointer transition-all', concept.completed ? 'bg-black/5' : 'hover:bg-transparent')}>
+                      {concept.completed ? (<CheckCircle2 className="h-5 w-5 text-black" />) : (<Circle className="h-5 w-5 text-muted-foreground" />)}
                       <div className="flex-1">
-                        <p className="text-sm font-medium">{concept.title}</p>
+                        <p className={cn("text-sm font-medium", concept.completed && "line-through text-muted-foreground")}>{concept.title}</p>
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
                           <Clock className="h-3 w-3" />
                           {concept.duration} min

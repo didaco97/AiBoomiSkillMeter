@@ -1,7 +1,7 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLearning } from '@/contexts/LearningContext';
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, LineChart, Line } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, LineChart, Line, Tooltip } from 'recharts';
 import { Flame, Trophy, Clock, BookOpen, AlertCircle, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -45,9 +45,9 @@ export default function Progress() {
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, i) => (<motion.div key={stat.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
-          <Card>
+          <Card className="rounded-none border-2 border-black shadow-[6px_6px_0px_0px_#000]">
             <CardContent className="p-4 flex items-center gap-3">
-              <div className={`h-10 w-10 rounded-lg bg-muted flex items-center justify-center ${stat.color}`}>
+              <div className={`h-10 w-10 rounded-none flex items-center justify-center border border-black ${stat.color} bg-transparent`}>
                 <stat.icon className="h-5 w-5" />
               </div>
               <div>
@@ -61,7 +61,7 @@ export default function Progress() {
 
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Weekly Activity */}
-        <Card>
+        <Card className="rounded-none border-2 border-black shadow-[6px_6px_0px_0px_#000]">
           <CardHeader>
             <CardTitle>Weekly Activity</CardTitle>
             <CardDescription>Minutes learned per day</CardDescription>
@@ -72,7 +72,11 @@ export default function Progress() {
                 <BarChart data={progress.dailyProgress}>
                   <XAxis dataKey="date" tickFormatter={(v) => new Date(v).toLocaleDateString('en', { weekday: 'short' })} />
                   <YAxis />
-                  <Bar dataKey="minutesLearned" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                  <Tooltip
+                    cursor={{ fill: 'rgba(0,0,0,0.1)' }}
+                    contentStyle={{ borderRadius: '0px', border: '2px solid black', boxShadow: '4px 4px 0px 0px #000' }}
+                  />
+                  <Bar dataKey="minutesLearned" fill="black" radius={[0, 0, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -80,7 +84,7 @@ export default function Progress() {
         </Card>
 
         {/* Score Trend */}
-        <Card>
+        <Card className="rounded-none border-2 border-black shadow-[6px_6px_0px_0px_#000]">
           <CardHeader>
             <CardTitle>Concepts Completed</CardTitle>
             <CardDescription>Daily progress</CardDescription>
@@ -91,7 +95,10 @@ export default function Progress() {
                 <LineChart data={progress.dailyProgress}>
                   <XAxis dataKey="date" tickFormatter={(v) => new Date(v).toLocaleDateString('en', { weekday: 'short' })} />
                   <YAxis />
-                  <Line type="monotone" dataKey="conceptsCompleted" stroke="hsl(var(--success))" strokeWidth={2} dot={{ fill: 'hsl(var(--success))' }} />
+                  <Tooltip
+                    contentStyle={{ borderRadius: '0px', border: '2px solid black', boxShadow: '4px 4px 0px 0px #000' }}
+                  />
+                  <Line type="monotone" dataKey="conceptsCompleted" stroke="black" strokeWidth={2} dot={{ fill: 'white', stroke: 'black', strokeWidth: 2, r: 4 }} activeDot={{ r: 6, strokeWidth: 0 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -100,17 +107,17 @@ export default function Progress() {
       </div>
 
       {/* Weak Areas */}
-      {progress.weakConcepts && progress.weakConcepts.length > 0 && (<Card>
+      {progress.weakConcepts && progress.weakConcepts.length > 0 && (<Card className="rounded-none border-2 border-black shadow-[6px_6px_0px_0px_#000]">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <AlertCircle className="h-5 w-5 text-warning" />
+            <AlertCircle className="h-5 w-5 text-black" />
             Areas to Improve
           </CardTitle>
           <CardDescription>Based on your assessment scores</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
-            {progress.weakConcepts.map((concept) => (<span key={concept} className="px-3 py-1 bg-warning/10 text-warning rounded-full text-sm">
+            {progress.weakConcepts.map((concept) => (<span key={concept} className="px-3 py-1 border border-black text-black rounded-none text-sm bg-transparent">
               {concept}
             </span>))}
           </div>

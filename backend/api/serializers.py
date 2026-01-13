@@ -51,13 +51,13 @@ from .models import (
 class LearnerProfileSerializer(serializers.ModelSerializer):
     skillLevel = serializers.CharField(source='skill_level')
     learningGoals = serializers.JSONField(source='learning_goals')
-    knownLanguages = serializers.JSONField(source='known_languages')
+    learningGoals = serializers.JSONField(source='learning_goals')
     dailyStudyTime = serializers.IntegerField(source='daily_study_time')
     onboardingCompleted = serializers.BooleanField(source='onboarding_completed')
 
     class Meta:
         model = LearnerProfile
-        fields = ('id', 'user', 'skillLevel', 'learningGoals', 'knownLanguages', 'dailyStudyTime', 'onboardingCompleted')
+        fields = ('id', 'user', 'skillLevel', 'learningGoals', 'dailyStudyTime', 'onboardingCompleted')
         read_only_fields = ('user',)
 
 class ConceptSerializer(serializers.ModelSerializer):

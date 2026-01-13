@@ -16,8 +16,6 @@ class LearnerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     skill_level = models.CharField(max_length=20, choices=SKILL_LEVELS, default='beginner')
     learning_goals = models.JSONField(default=list, blank=True)  # List of goal IDs
-    known_languages = models.JSONField(default=list, blank=True)  # List of language names
-    known_tools = models.JSONField(default=list, blank=True)  # List of tool names
     daily_study_time = models.IntegerField(default=30)  # Minutes per day
     onboarding_completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

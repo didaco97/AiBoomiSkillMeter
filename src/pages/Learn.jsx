@@ -8,7 +8,7 @@ import { useLearning } from '@/contexts/LearningContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { PlayCircle, FileText, CheckSquare, CheckCircle2, ArrowLeft, ExternalLink, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { mockAssessments } from '@/data/mockData';
+// import { mockAssessments } from '@/data/mockData'; // Removed
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
@@ -120,7 +120,7 @@ export default function Learn() {
   }
   const currentChapter = currentRoadmap.course.chapters[currentRoadmap.currentChapter];
   const currentConcept = currentChapter?.concepts[currentRoadmap.currentConcept];
-  const assessment = mockAssessments.find(a => a.conceptId === currentConcept?.id);
+  // const assessment = mockAssessments.find(a => a.conceptId === currentConcept?.id); // Removed
   const handleComplete = async () => {
     if (currentConcept) {
       await markConceptComplete(currentConcept.id);
@@ -160,7 +160,7 @@ export default function Learn() {
     }
   };
   const handleSubmitAssessment = () => {
-    const quizQuestions = quiz || assessment?.questions || [];
+    const quizQuestions = quiz || [];
     if (quizQuestions.length === 0) return;
     let correct = 0;
     quizQuestions.forEach((q, i) => {
@@ -194,28 +194,32 @@ export default function Learn() {
 
       {/* Content Tabs */}
       <Tabs value={currentTab} onValueChange={handleTabChange}>
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="video"><PlayCircle className="h-4 w-4 mr-2" />Video</TabsTrigger>
-          <TabsTrigger value="notes"><FileText className="h-4 w-4 mr-2" />Notes</TabsTrigger>
-          <TabsTrigger value="assessment"><CheckSquare className="h-4 w-4 mr-2" />Quiz</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 rounded-none border-2 border-black bg-white h-auto p-0">
+          <TabsTrigger value="video" className="rounded-none border-r-2 border-black data-[state=active]:bg-black data-[state=active]:text-white h-12 bg-transparent"><PlayCircle className="h-4 w-4 mr-2" />Video</TabsTrigger>
+          <TabsTrigger value="notes" className="rounded-none border-r-2 border-black data-[state=active]:bg-black data-[state=active]:text-white h-12 bg-transparent"><FileText className="h-4 w-4 mr-2" />Notes</TabsTrigger>
+          <TabsTrigger value="assessment" className="rounded-none data-[state=active]:bg-black data-[state=active]:text-white h-12 bg-transparent"><CheckSquare className="h-4 w-4 mr-2" />Quiz</TabsTrigger>
         </TabsList>
 
+
+
         <TabsContent value="video" className="mt-4">
-          <Card>
+          <Card className="rounded-none border-2 border-black shadow-[6px_6px_0px_0px_#000]">
             <CardContent className="p-0">
               {(() => {
                 const embedUrl = convertToEmbedUrl(currentConcept.videoUrl);
                 if (embedUrl) {
                   return (
+
                     <div className="aspect-video">
                       <iframe
                         src={embedUrl}
-                        className="w-full h-full rounded-lg"
+                        className="w-full h-full rounded-none border-2 border-black"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
                       />
                     </div>
                   );
+
                 } else if (currentConcept.videoUrl) {
                   return (
                     <div className="aspect-video bg-muted flex flex-col items-center justify-center rounded-lg gap-4">
@@ -242,7 +246,7 @@ export default function Learn() {
         </TabsContent>
 
         <TabsContent value="notes" className="mt-4">
-          <Card>
+          <Card className="rounded-none border-2 border-black shadow-[6px_6px_0px_0px_#000]">
             <CardContent className="p-6 prose prose-sm max-w-none">
               {notesLoading ? (
                 <div className="flex flex-col items-center justify-center py-12 gap-4">
@@ -270,7 +274,7 @@ export default function Learn() {
         </TabsContent>
 
         <TabsContent value="assessment" className="mt-4">
-          <Card>
+          <Card className="rounded-none border-2 border-black shadow-[6px_6px_0px_0px_#000]">
             <CardHeader>
               <CardTitle>Knowledge Check</CardTitle>
             </CardHeader>
@@ -310,30 +314,6 @@ export default function Learn() {
                     Submit Answers
                   </Button>
                 </>
-              ) : assessment ? (
-                <>
-                  {assessment.questions.map((q, i) => (
-                    <div key={q.id} className="space-y-3">
-                      <p className="font-medium">{i + 1}. {q.question}</p>
-                      <RadioGroup value={assessmentAnswers[q.id]} onValueChange={(v) => setAssessmentAnswers({ ...assessmentAnswers, [q.id]: v })}>
-                        {q.options?.map((option) => (
-                          <div key={option} className="flex items-center space-x-2">
-                            <RadioGroupItem value={option} id={`${q.id}-${option}`} />
-                            <Label htmlFor={`${q.id}-${option}`} className="cursor-pointer">{option}</Label>
-                          </div>
-                        ))}
-                      </RadioGroup>
-                      {showResults && (
-                        <p className={`text-sm ${assessmentAnswers[q.id] === q.correctAnswer ? 'text-green-600' : 'text-red-600'}`}>
-                          {assessmentAnswers[q.id] === q.correctAnswer ? '✓ Correct!' : `✗ Correct answer: ${q.correctAnswer}`}
-                        </p>
-                      )}
-                    </div>
-                  ))}
-                  <Button onClick={handleSubmitAssessment} disabled={Object.keys(assessmentAnswers).length < assessment.questions.length}>
-                    Submit Answers
-                  </Button>
-                </>
               ) : (
                 <div className="text-center py-8">
                   <p className="text-muted-foreground mb-4">Quiz not generated yet</p>
@@ -345,17 +325,25 @@ export default function Learn() {
             </CardContent>
           </Card>
         </TabsContent>
-      </Tabs>
+      </Tabs >
 
       {/* Navigation */}
       <div className="flex justify-between">
-        <Button variant="outline" onClick={() => navigate('/roadmap')}>
+        <Button
+          variant="outline"
+          onClick={() => navigate('/roadmap')}
+          className="rounded-none border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all bg-white"
+        >
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Roadmap
         </Button>
-        <Button onClick={handleComplete} disabled={currentConcept.completed}>
+        <Button
+          onClick={handleComplete}
+          disabled={currentConcept.completed}
+          className="rounded-none border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all bg-black text-white hover:bg-black/90"
+        >
           {currentConcept.completed ? 'Completed' : 'Mark as Complete'} <CheckCircle2 className="ml-2 h-4 w-4" />
         </Button>
       </div>
-    </div>
-  </DashboardLayout>);
+    </div >
+  </DashboardLayout >);
 }

@@ -41,7 +41,7 @@ def seed_data():
         title='What is React?',
         description='Understanding React and its core philosophy',
         duration=15,
-        video_url='https://www.youtube.com/embed/Tn6-PIqc4UM',
+        video_url='https://www.youtube.com/embed/SqcY0GlETPk',
         notes='# What is React?\n\nReact is a JavaScript library for building user interfaces...',
         content_type='video',
         order=1
@@ -67,7 +67,7 @@ def seed_data():
         title='JSX Fundamentals',
         description='Learn the syntax that powers React components',
         duration=25,
-        video_url='https://www.youtube.com/embed/9GtB5G2xGTY',
+        video_url='https://www.youtube.com/embed/7fPXI_MnBOY',
         content_type='video',
         order=2
     )
@@ -95,7 +95,7 @@ def seed_data():
         title='Array Operations',
         description='Understanding arrays and common operations',
         duration=25,
-        video_url='https://www.youtube.com/embed/pmN9ExDf3yQ',
+        video_url='https://www.youtube.com/embed/D6xkbGLQesk',
         content_type='video',
         order=1
     )

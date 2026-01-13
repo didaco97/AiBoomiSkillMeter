@@ -24,34 +24,48 @@ export function DashboardLayout({ children }) {
 
   return (<div className="h-screen overflow-hidden flex bg-background">
     {/* Sidebar - Desktop */}
-    <aside className="hidden lg:flex flex-col border-r border-border bg-card w-60 h-full overflow-y-auto">
+    <aside className="hidden lg:flex flex-col border-r border-border bg-sidebar-background w-64 h-full shrink-0">
       {/* Logo Section */}
-      <div className="p-4 border-b border-border sticky top-0 bg-card z-10">
+      <div className="p-6 border-b border-border sticky top-0 bg-sidebar-background z-10">
         <Link to="/" className="flex items-center gap-3">
           <img
             src="/logo.png"
             alt="SkillMeter"
-            className="h-9 w-9 object-contain shrink-0"
+            className="h-8 w-8 object-contain shrink-0 grayscale placeholder-opacity-100" // Grayscale logo
           />
-          <span className="font-heading font-semibold text-lg">SkillMeter</span>
+          <span className="font-heading font-bold text-xl tracking-tight">SkillMeter</span>
         </Link>
       </div>
 
-      <nav className="flex-1 p-4 space-y-1">
+      <nav className="flex-1 p-4 space-y-1 overflow-y-auto no-scrollbar">
         {sidebarLinks.map((link) => {
           const isActive = location.pathname === link.href;
-          return (<Link key={link.href} to={link.href} className={cn('flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200', isActive
-            ? 'bg-primary text-primary-foreground shadow-soft'
-            : 'text-muted-foreground hover:bg-muted hover:text-foreground')}>
-            <link.icon className="h-5 w-5 shrink-0" />
-            <span className="text-sm font-medium">{link.label}</span>
-          </Link>);
+          return (
+            <Link
+              key={link.href}
+              to={link.href}
+              className={cn(
+                'flex items-center gap-3 px-4 py-3 text-sm font-medium transition-all border-2 rounded-none',
+                isActive
+                  ? 'bg-transparent text-black border-black shadow-[4px_4px_0px_0px_#000] -translate-y-[1px] -translate-x-[1px]' // Active: Outline, Shadow
+                  : 'text-muted-foreground border-transparent hover:text-black hover:border-black hover:shadow-[4px_4px_0px_0px_#000] hover:-translate-y-[1px] hover:-translate-x-[1px] hover:bg-white' // Hover: Border, Shadow, Move
+              )}
+            >
+              <link.icon className={cn("h-4 w-4 shrink-0", isActive ? "text-white" : "text-current")} />
+              <span>{link.label}</span>
+            </Link>
+          );
         })}
       </nav>
 
       {/* Logout Button */}
-      <div className="p-4 border-t border-border sticky bottom-0 bg-card z-10">
-        <Button variant="ghost" size="sm" className="w-full justify-start text-muted-foreground hover:text-destructive" onClick={logout}>
+      <div className="p-4 border-t border-border sticky bottom-0 bg-sidebar-background z-10">
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-secondary border-transparent hover:border-border"
+          onClick={logout}
+        >
           <LogOut className="h-4 w-4 mr-2" />
           <span>Logout</span>
         </Button>

@@ -50,14 +50,14 @@ export default function Dashboard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
             >
-              <Card>
+              <Card className="rounded-none border-2 border-black shadow-[6px_6px_0px_0px_#000]">
                 <CardContent className="p-4 flex items-center gap-3">
-                  <div className={`h-10 w-10 rounded-lg bg-muted flex items-center justify-center ${stat.color}`}>
+                  <div className={`h-10 w-10 border border-black flex items-center justify-center ${stat.color} bg-transparent`}>
                     <stat.icon className="h-5 w-5" />
                   </div>
                   <div>
                     <p className="text-2xl font-bold">{stat.value}</p>
-                    <p className="text-xs text-muted-foreground">{stat.label}</p>
+                    <p className="text-xs text-muted-foreground font-medium">{stat.label}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -67,7 +67,7 @@ export default function Dashboard() {
 
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Current Course */}
-          <Card className="lg:col-span-2">
+          <Card className="lg:col-span-2 rounded-none border-2 border-black shadow-[6px_6px_0px_0px_#000]">
             <CardHeader>
               <CardTitle>Current Course</CardTitle>
               <CardDescription>Pick up where you left off</CardDescription>
@@ -79,7 +79,7 @@ export default function Dashboard() {
                     <img
                       src={currentRoadmap.course?.thumbnail}
                       alt={currentRoadmap.course?.title}
-                      className="w-24 h-16 rounded-lg object-cover"
+                      className="w-24 h-16 object-cover border border-black"
                     />
                     <div className="flex-1">
                       <h3 className="font-heading font-semibold">{currentRoadmap.course?.title}</h3>
@@ -93,23 +93,23 @@ export default function Dashboard() {
                       <span className="text-muted-foreground">Progress</span>
                       <span className="font-medium">{currentRoadmap.progress}%</span>
                     </div>
-                    <Progress value={currentRoadmap.progress} className="h-2" />
+                    <Progress value={currentRoadmap.progress} className="h-2 border border-black rounded-none" />
                   </div>
-                  <Button onClick={() => navigate('/learn')} className="w-full">
+                  <Button onClick={() => navigate('/learn')} className="w-full rounded-none">
                     Continue Learning <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </div>
               ) : (
                 <div className="text-center py-8">
                   <p className="text-muted-foreground mb-4">No active course. Start your learning journey!</p>
-                  <Button onClick={() => navigate('/onboarding')}>Get Started</Button>
+                  <Button onClick={() => navigate('/onboarding')} className="rounded-none">Get Started</Button>
                 </div>
               )}
             </CardContent>
           </Card>
 
           {/* Today's Tasks */}
-          <Card>
+          <Card className="rounded-none border-2 border-black shadow-[6px_6px_0px_0px_#000]">
             <CardHeader>
               <CardTitle>Today's Tasks</CardTitle>
               <CardDescription>Complete these to maintain your streak</CardDescription>
@@ -120,11 +120,11 @@ export default function Dashboard() {
                 return (
                   <div
                     key={task.id}
-                    className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer"
+                    className="flex items-center gap-3 p-3 border border-transparent hover:border-black hover:bg-transparent transition-all cursor-pointer group"
                     onClick={() => navigate('/learn')}
                   >
-                    <Icon className="h-5 w-5 text-primary" />
-                    <span className="text-sm flex-1">{task.title}</span>
+                    <Icon className="h-5 w-5 text-black group-hover:scale-110 transition-transform" />
+                    <span className="text-sm flex-1 font-medium">{task.title}</span>
                   </div>
                 );
               }) : (
@@ -140,13 +140,13 @@ export default function Dashboard() {
         </motion.div>
 
         {/* My Courses Section */}
-        <Card>
+        <Card className="rounded-none border-2 border-black shadow-[6px_6px_0px_0px_#000] mb-8">
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
               <CardTitle>My Courses</CardTitle>
               <CardDescription>All your enrolled courses</CardDescription>
             </div>
-            <Button onClick={() => navigate('/onboarding')} variant="outline" size="sm">
+            <Button onClick={() => navigate('/onboarding')} variant="outline" size="sm" className="rounded-none border-black hover:bg-black hover:text-white">
               <PlusCircle className="mr-2 h-4 w-4" />
               New Course
             </Button>
@@ -161,31 +161,31 @@ export default function Dashboard() {
                     animate={{ opacity: 1, scale: 1 }}
                     whileHover={{ scale: 1.02 }}
                     onClick={() => setCurrentRoadmap(roadmap)}
-                    className={`p-4 rounded-lg border cursor-pointer transition-all ${currentRoadmap?.id === roadmap.id
-                      ? 'border-primary bg-primary/5 ring-2 ring-primary'
-                      : 'border-border hover:border-primary/50'
+                    className={`p-4 border-2 cursor-pointer transition-all ${currentRoadmap?.id === roadmap.id
+                      ? 'border-black bg-black text-white'
+                      : 'border-muted hover:border-black'
                       }`}
                   >
                     <div className="flex items-start gap-3">
                       <img
                         src={roadmap.course?.thumbnail || '/placeholder-course.jpg'}
                         alt={roadmap.course?.title}
-                        className="w-16 h-12 rounded object-cover"
+                        className="w-16 h-12 object-cover border border-current"
                       />
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-sm truncate">{roadmap.course?.title}</h4>
-                        <p className="text-xs text-muted-foreground capitalize">{roadmap.course?.difficulty}</p>
+                        <h4 className="font-bold text-sm truncate">{roadmap.course?.title}</h4>
+                        <p className={`text-xs capitalize ${currentRoadmap?.id === roadmap.id ? 'text-gray-300' : 'text-muted-foreground'}`}>{roadmap.course?.difficulty}</p>
                       </div>
                     </div>
                     <div className="mt-3">
                       <div className="flex justify-between text-xs mb-1">
-                        <span className="text-muted-foreground">Progress</span>
-                        <span className="font-medium">{roadmap.progress || 0}%</span>
+                        <span className={currentRoadmap?.id === roadmap.id ? 'text-gray-300' : 'text-muted-foreground'}>Progress</span>
+                        <span className="font-bold">{roadmap.progress || 0}%</span>
                       </div>
-                      <Progress value={roadmap.progress || 0} className="h-1.5" />
+                      <Progress value={roadmap.progress || 0} className={`h-1.5 rounded-none border ${currentRoadmap?.id === roadmap.id ? 'border-white bg-gray-800' : 'border-black'}`} />
                     </div>
                     {currentRoadmap?.id === roadmap.id && (
-                      <div className="mt-2 text-xs text-primary font-medium">✓ Active Course</div>
+                      <div className="mt-2 text-xs font-bold text-white">✓ Active</div>
                     )}
                   </motion.div>
                 ))}
@@ -194,7 +194,7 @@ export default function Dashboard() {
               <div className="text-center py-8">
                 <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <p className="text-muted-foreground mb-4">No courses yet. Start your first learning journey!</p>
-                <Button onClick={() => navigate('/onboarding')}>
+                <Button onClick={() => navigate('/onboarding')} className="rounded-none">
                   <PlusCircle className="mr-2 h-4 w-4" />
                   Create First Course
                 </Button>

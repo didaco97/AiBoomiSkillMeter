@@ -17,7 +17,7 @@ export function ReviewForm() {
     };
 
     return (
-        <Card className="w-full max-w-md mx-auto">
+        <Card className="w-full max-w-md mx-auto rounded-none border-2 border-black shadow-[8px_8px_0px_0px_#000]">
             <CardHeader>
                 <CardTitle>Share Your Experience</CardTitle>
                 <CardDescription>Tell us what you think about SkillMeter.</CardDescription>
@@ -51,22 +51,22 @@ export function ReviewForm() {
                         </div>
 
                         <div className="space-y-2">
-                            <Input placeholder="Your Name" required />
+                            <Input placeholder="Your Name" required className="rounded-none border-2 border-black focus-visible:ring-0 focus-visible:shadow-[4px_4px_0px_0px_#000] focus-visible:-translate-y-[2px] focus-visible:-translate-x-[2px] transition-all" />
                         </div>
 
                         <div className="space-y-2">
-                            <Input placeholder="@twitter_handle (optional)" />
+                            <Input placeholder="@twitter_handle (optional)" className="rounded-none border-2 border-black focus-visible:ring-0 focus-visible:shadow-[4px_4px_0px_0px_#000] focus-visible:-translate-y-[2px] focus-visible:-translate-x-[2px] transition-all" />
                         </div>
 
                         <div className="space-y-2">
                             <Textarea
                                 placeholder="What did you like about SkillMeter?"
-                                className="min-h-[100px]"
+                                className="min-h-[100px] rounded-none border-2 border-black focus-visible:ring-0 focus-visible:shadow-[4px_4px_0px_0px_#000] focus-visible:-translate-y-[2px] focus-visible:-translate-x-[2px] transition-all"
                                 required
                             />
                         </div>
 
-                        <Button type="submit" className="w-full">
+                        <Button type="submit" className="w-full rounded-none border-2 border-black bg-black text-white hover:bg-black/90 shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
                             Submit Review
                         </Button>
                     </form>
