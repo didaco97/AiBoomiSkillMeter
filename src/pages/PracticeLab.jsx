@@ -62,7 +62,7 @@ export default function PracticeLab() {
 
     return (
         <DashboardLayout>
-            <div className="flex h-[calc(100vh-100px)] gap-4 -m-4 p-4">
+            <div className="flex h-[calc(100vh-100px)]">
                 {/* Sidebar */}
                 <div className="hidden lg:block h-full">
                     <div className="h-full rounded-xl overflow-hidden border border-border bg-card">
