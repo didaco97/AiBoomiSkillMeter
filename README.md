@@ -96,10 +96,11 @@ A comprehensive module combining social connection with technical preparation.
     *   **Topic Selector**: Allows users to choose question categories (React, Node.js, System Design, Behavioral, DSA).
 
 4.  **Interactive Interview Simulator**:
+    *   **Real-time Voice Interactions**: Integrated client-side Speech-to-Text (`webkitSpeechRecognition`) allows users to verbally answer questions.
+    *   **Context-Aware AI**: The AI (Gemini 1.5 Flash) listens to the candidate's answer and generates follow-up questions dynamically (no pre-canned scripts).
+    *   **Live Performance Analysis**: Post-session reports with Score (0-100), detailed Feedback, and Transcript analysis.
+    *   **Webcam & Avatar**: Split-screen interface with user video and AI Interviewer avatar (LiveKit integration).
     *   **Dynamic Question Bank**: Questions update in real-time based on the selected sidebar topic.
-    *   **Webcam Integration**: Mock video feed to simulate a real call environment.
-    *   **Recording Timer**: Visual cues for recording status.
-    *   **Question Navigation**: Previous/Next controls to cycle through the selected topic's question set.
 
 5.  **Mentor Cards**:
     *   **Visuals**: Custom illustration avatars (DiceBear Lorelei styling).
@@ -175,6 +176,7 @@ Multi-channel alert system to keep learners engaged.
 
 | Library | Version | Purpose |
 |---------|---------|---------|
+| **livekit-client** | 1.15.x | WebRTC video/audio handling for Mock Interview |
 | **@mediapipe/face_mesh** | 0.4.x | Face landmark detection for Study Room |
 | **@mediapipe/camera_utils** | 0.3.x | Camera stream management |
 
@@ -194,6 +196,9 @@ Multi-channel alert system to keep learners engaged.
 
 | Library | Purpose |
 |---------|---------|
+| **django-channels** | WebSocket support for real-time signaling (Daphne) |
+| **google-genai** | Gemini 1.5 Flash integration for conversational AI |
+| **livekit-api** | Real-time video/audio room management |
 | **twilio** | Sending WhatsApp and Email notifications |
 | **qrcode** | Generating verification QR codes for certificates |
 | **reportlab** | PDF Certificate generation |
