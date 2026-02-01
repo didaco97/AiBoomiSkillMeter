@@ -1,10 +1,19 @@
+import os
 import requests
 import json
+from dotenv import load_dotenv
 
-API_KEY = "AIzaSyA98duwWN_9PKaaYmPY0K9WxpzTrPaxcdU"
+# Load environment variables
+load_dotenv()
+
+API_KEY = os.getenv('YOUTUBE_API_KEY')
 
 def search_video(query):
     print(f"Testing query: {query}")
+    if not API_KEY:
+        print("ERROR: YOUTUBE_API_KEY not found in environment variables.")
+        return
+
     try:
         url = "https://www.googleapis.com/youtube/v3/search"
         params = {
