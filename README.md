@@ -45,9 +45,9 @@
 
 **SkillMeter AI** is a comprehensive, AI-powered personalized learning platform that transforms unstructured free online educational content into a structured, goal-oriented, and assessment-driven learning experience. The system leverages **Artificial Intelligence** to understand learner profiles, generate customized learning roadmaps, enforce daily study routines, and evaluate learning outcomes through content-based assessments.
 
-### One-Line Solution Summary
+### AI Impact Statement
 
-> *An AI-driven system that converts free online educational content into a personalized, assessed, and trackable learning experience.*
+> *In an economy where skill is the new currency, SkillMeterAi is how you prove your net worth.*
 
 ### Benefits of SkillMeter AI
 
