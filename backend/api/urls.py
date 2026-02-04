@@ -14,7 +14,6 @@ from .views import (
     get_leaderboard, get_trending_topics,
     MentorListCreateView, MentorDetailView, BookingCreateView, 
     BookingListView, MentorDashboardBookingListView, update_booking_status,
-    BookingListView, MentorDashboardBookingListView, update_booking_status,
     mentor_stats_view, mentor_availability_view, mentor_payments_view,
     upload_resume
 )

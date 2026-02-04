@@ -127,7 +127,7 @@ export function useInterviewWebSocket() {
     }, []);
 
     // Initialize interview session
-    const initSession = useCallback((topic, level, duration, userId) => {
+    const initSession = useCallback((topic, level, duration, userId, resumeUrl = null) => {
         setIsLoading(true);
         setInterviewReport(null);
         setCurrentQuestion("Connecting to AI interviewer...");
@@ -136,7 +136,8 @@ export function useInterviewWebSocket() {
             topic,
             level,
             duration,
-            user_id: userId
+            user_id: userId,
+            resume_url: resumeUrl
         });
     }, [sendMessage]);
 
