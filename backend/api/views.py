@@ -1,6 +1,7 @@
 from rest_framework import generics, status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
@@ -1105,4 +1106,39 @@ def mentor_payments_view(request):
         'totalEarned': float(total_earned),
         'transactions': transactions
     })
+
+
+
+# --- Resume Upload View ---
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser])
+def upload_resume(request):
+    """
+    Handles resume uploads for authenticated users.
+    Saves the file to the user's LearnerProfile.
+    """
+    if 'resume' not in request.FILES:
+        return Response({'error': 'No resume file provided'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        profile = request.user.profile
+    except Exception:
+        return Response({'error': 'User profile not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    resume_file = request.FILES['resume']
+    
+    # Save to profile (this automatically handles FileSystemStorage via model field)
+    profile.resume = resume_file
+    profile.save()
+    
+    # Return file URL
+    file_url = profile.resume.url if profile.resume else ''
+    
+    return Response({
+        'message': 'Resume uploaded successfully',
+        'file_url': file_url,
+        'filename': resume_file.name
+    }, status=status.HTTP_201_CREATED)
 

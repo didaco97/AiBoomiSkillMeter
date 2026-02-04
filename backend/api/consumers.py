@@ -5,7 +5,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.contrib.auth.models import User
 from .models import InterviewSession
-from .services import GeminiInterviewService, LiveKitService, BeyondPresenceService
+from .services import GeminiInterviewService, LiveKitService
 
 logger = logging.getLogger(__name__)
 
@@ -78,20 +78,15 @@ class InterviewConsumer(AsyncWebsocketConsumer):
         self.conversation_history.append(opening_question)
         self.transcript += f"Interviewer: {opening_question}\n"
         
-        # Create Beyond Presence avatar session (simulated if no key)
-        avatar_session = await database_sync_to_async(
-            BeyondPresenceService.create_session
-        )()
-        
         # Generate LiveKit token for user
         room_name = f"interview_{self.session_id}"
         livekit_token = await database_sync_to_async(
             LiveKitService.create_token
         )(room_name, f"user_{user_id}")
         
-        # Determine LiveKit URL (Prioritize Avatar, then Env, then Mock)
+        # Determine LiveKit URL (Prioritize Env, then Mock)
         env_livekit_url = os.getenv('LIVEKIT_URL')
-        livekit_url = avatar_session.get('livekit_url') or env_livekit_url or 'wss://mock.livekit.cloud'
+        livekit_url = env_livekit_url or 'wss://mock.livekit.cloud'
 
         # Send initialization response
         await self.send(text_data=json.dumps({
@@ -99,14 +94,8 @@ class InterviewConsumer(AsyncWebsocketConsumer):
             'session_id': self.session_id,
             'opening_question': opening_question,
             'livekit_token': livekit_token,
-            'livekit_url': livekit_url,
-            'avatar_status': avatar_session.get('status', 'simulated')
+            'livekit_url': livekit_url
         }))
-        
-        # Trigger avatar to speak (simulated if no key)
-        await database_sync_to_async(
-            BeyondPresenceService.speak
-        )(opening_question, avatar_session.get('session_id', 'mock'))
     
     async def handle_user_answer(self, data):
         """
@@ -134,11 +123,6 @@ class InterviewConsumer(AsyncWebsocketConsumer):
             'type': 'NEXT_QUESTION',
             'question': next_question
         }))
-        
-        # Trigger avatar to speak
-        await database_sync_to_async(
-            BeyondPresenceService.speak
-        )(next_question, f"session_{self.session_id}")
     
     async def handle_end_session(self, data):
         """

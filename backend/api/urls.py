@@ -14,11 +14,16 @@ from .views import (
     get_leaderboard, get_trending_topics,
     MentorListCreateView, MentorDetailView, BookingCreateView, 
     BookingListView, MentorDashboardBookingListView, update_booking_status,
-    mentor_stats_view, mentor_availability_view, mentor_payments_view
+    BookingListView, MentorDashboardBookingListView, update_booking_status,
+    mentor_stats_view, mentor_availability_view, mentor_payments_view,
+    upload_resume
 )
 
 urlpatterns = [
     path('hello/', hello_world, name='hello_world'),
+    
+    # Resume Upload
+    path('upload-resume/', upload_resume, name='upload_resume'),
     
     # Auth endpoints
     path('auth/register/', RegisterView.as_view(), name='register'),

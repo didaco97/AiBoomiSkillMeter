@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Filter, Video, Mic, MessageSquare, Star, Clock, Calendar, CheckCircle2, Play, Pause, RefreshCw, Smartphone, Linkedin, Loader2, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { useInterviewWebSocket } from '../hooks/useInterviewWebSocket';
+import api from '../api/api';
 
 // --- MOCK DATA ---
 const MENTORS = [
@@ -117,18 +118,30 @@ const INTERVIEW_TOPICS = [
 ];
 
 
-
-import api from '../api/api';
-
-// ... (imports remain)
-
 export default function MentorConnect() {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('find-mentors');
     const [filter, setFilter] = useState('');
     const [selectedTopic, setSelectedTopic] = useState("Behavioral");
     const [experienceLevel, setExperienceLevel] = useState("mid");
+
     const [simulationDuration, setSimulationDuration] = useState("15");
+    const [resumeFile, setResumeFile] = useState(null);
+    const fileInputRef = useRef(null);
+
+    const handleFileChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            setResumeFile(e.target.files[0]);
+        }
+    };
+
+    const handleRemoveFile = (e) => {
+        e.stopPropagation();
+        setResumeFile(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+    };
 
     // WebSocket Hook for Real-Time Interview
     const {
@@ -420,12 +433,14 @@ export default function MentorConnect() {
                                 className="origin-top"
                             >
                                 <h1 className="text-4xl md:text-5xl font-black tracking-tighter uppercase mb-2" style={{ fontFamily: '"Comic Sans MS", "Chalkboard SE", "Comic Neue", sans-serif' }}>
-                                    {activeTab === 'find-mentors' ? 'Mentor Connect' : 'Mock Interview'}
+                                    {activeTab === 'find-mentors' ? 'Mentor Connect' : activeTab === 'my-sessions' ? 'Sessions with Mentor' : 'Mock Interview'}
                                 </h1>
                                 <p className="text-lg font-bold text-gray-600 bg-yellow-300 inline-block px-2 border-2 border-black shadow-[4px_4px_0px_0px_#000]">
                                     {activeTab === 'find-mentors'
                                         ? 'Find an expert • Master the interview • Get hired'
-                                        : 'Practice real questions • Record yourself • Get feedback'}
+                                        : activeTab === 'my-sessions'
+                                            ? 'Track your progress • Manage bookings • History'
+                                            : 'Practice real questions • Record yourself • Get feedback'}
                                 </p>
                             </motion.div>
                         </AnimatePresence>
@@ -465,49 +480,112 @@ export default function MentorConnect() {
                             </TabsList>
 
                             {/* New Trending Articles / Topics Component */}
-                            <div className="border-2 border-black bg-white shadow-[6px_6px_0px_0px_#ff0000] min-h-[550px] flex flex-col">
-                                <div className="bg-black text-white p-3 border-b-2 border-black flex-none">
-                                    <h3 className="font-black text-xl uppercase tracking-widest text-center">
-                                        {activeTab === 'find-mentors' ? 'Trending' : 'Select Topic'}
-                                    </h3>
-                                </div>
-                                <div className="p-4 flex-1 overflow-y-auto">
-                                    <ul className="space-y-4">
-                                        {activeTab === 'find-mentors' ? (
-                                            TRENDING_ARTICLES.map((article, i) => (
-                                                <li key={i} className="group cursor-pointer">
-                                                    <div className="flex justify-between items-start mb-1">
-                                                        <Badge className="rounded-none bg-black text-white hover:bg-black border border-black text-[10px] px-1 py-0 uppercase">
-                                                            {article.tag}
-                                                        </Badge>
-                                                        <span className="text-xs font-bold text-gray-500">{article.date}</span>
+                            {activeTab !== 'my-sessions' && (
+                                <div className="border-2 border-black bg-white shadow-[6px_6px_0px_0px_#ff0000] min-h-[550px] flex flex-col">
+                                    <div className="bg-black text-white p-3 border-b-2 border-black flex-none">
+                                        <h3 className="font-black text-xl uppercase tracking-widest text-center">
+                                            {activeTab === 'find-mentors' ? 'Trending' : 'Interview Settings'}
+                                        </h3>
+                                    </div>
+                                    <div className="p-4 flex-1 overflow-y-auto">
+                                        <ul className="space-y-4">
+                                            {activeTab === 'find-mentors' ? (
+                                                TRENDING_ARTICLES.map((article, i) => (
+                                                    <li key={i} className="group cursor-pointer">
+                                                        <div className="flex justify-between items-start mb-1">
+                                                            <Badge className="rounded-none bg-black text-white hover:bg-black border border-black text-[10px] px-1 py-0 uppercase">
+                                                                {article.tag}
+                                                            </Badge>
+                                                            <span className="text-xs font-bold text-gray-500">{article.date}</span>
+                                                        </div>
+                                                        <h4 className="font-bold leading-tight group-hover:text-[#ff0000] transition-colors line-clamp-2">
+                                                            {article.title}
+                                                        </h4>
+                                                        <div className="h-0.5 w-full bg-gray-200 mt-3 group-hover:bg-[#ff0000] transition-colors" />
+                                                    </li>
+                                                ))
+                                            ) : (
+                                                <div className="space-y-8">
+                                                    {/* Interview Topic Input */}
+                                                    <div className="space-y-3">
+                                                        <label className="text-xs font-black uppercase tracking-wider text-black">Enter Interview Topic</label>
+                                                        <Input
+                                                            value={selectedTopic}
+                                                            onChange={(e) => setSelectedTopic(e.target.value)}
+                                                            className="h-12 rounded-none border-2 border-black font-bold uppercase bg-gray-50 focus-visible:ring-0 focus-visible:bg-white transition-all shadow-[2px_2px_0px_0px_#ccc] focus:shadow-[4px_4px_0px_0px_#000]"
+                                                            placeholder="E.g. React, System Design"
+                                                        />
                                                     </div>
-                                                    <h4 className="font-bold leading-tight group-hover:text-[#ff0000] transition-colors line-clamp-2">
-                                                        {article.title}
-                                                    </h4>
-                                                    <div className="h-0.5 w-full bg-gray-200 mt-3 group-hover:bg-[#ff0000] transition-colors" />
-                                                </li>
-                                            ))
-                                        ) : (
-                                            INTERVIEW_TOPICS.map((topic, i) => (
-                                                <li key={i} onClick={() => setSelectedTopic(topic.title)} className={`group cursor-pointer p-3 border-2 border-black hover:bg-black hover:text-white transition-all shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-y-[2px] ${selectedTopic === topic.title ? 'bg-black text-white ring-2 ring-offset-2 ring-black' : topic.color}`}>
-                                                    <div className="flex justify-between items-center">
-                                                        <span className="font-black uppercase tracking-tight">{topic.title}</span>
-                                                        <Badge className={`rounded-none border border-black text-[10px] px-1 py-0 uppercase group-hover:bg-white group-hover:text-black ${selectedTopic === topic.title ? 'bg-white text-black' : 'bg-black text-white'}`}>
-                                                            {topic.count}
-                                                        </Badge>
+
+                                                    {/* Resume Upload */}
+                                                    <div className="space-y-3">
+                                                        <label className="text-xs font-black uppercase tracking-wider text-black">Upload Resume</label>
+
+                                                        {/* Hidden Real Input */}
+                                                        <input
+                                                            type="file"
+                                                            ref={fileInputRef}
+                                                            onChange={handleFileChange}
+                                                            className="hidden"
+                                                            accept=".pdf,.doc,.docx"
+                                                        />
+
+                                                        {/* Custom Upload Trigger */}
+                                                        <div
+                                                            onClick={() => fileInputRef.current?.click()}
+                                                            className="h-14 flex items-center border-2 border-black cursor-pointer bg-white hover:bg-gray-50 transition-colors shadow-[2px_2px_0px_0px_#ccc] hover:shadow-[1px_1px_0px_0px_#ccc] hover:translate-x-[1px] hover:translate-y-[1px]"
+                                                        >
+                                                            {/* Fake Button */}
+                                                            <div className="bg-black text-white h-full px-4 flex items-center justify-center font-black uppercase text-xs tracking-wider shrink-0">
+                                                                Choose File
+                                                            </div>
+
+                                                            {/* File Name or Placeholder */}
+                                                            <div className="flex-1 px-4 font-bold uppercase text-xs truncate text-gray-500">
+                                                                {resumeFile ? (
+                                                                    <span className="text-black">{resumeFile.name}</span>
+                                                                ) : (
+                                                                    "No file chosen"
+                                                                )}
+                                                            </div>
+
+                                                            {/* Remove Button (Only if file selected) */}
+                                                            {resumeFile && (
+                                                                <div
+                                                                    onClick={handleRemoveFile}
+                                                                    className="h-full px-4 flex items-center justify-center border-l-2 border-black hover:bg-red-500 hover:text-white transition-colors"
+                                                                >
+                                                                    <span className="font-black">X</span>
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                     </div>
-                                                </li>
-                                            ))
-                                        )}
-                                    </ul>
+
+                                                    {/* Interview Level Selector */}
+                                                    <div className="space-y-3">
+                                                        <label className="text-xs font-black uppercase tracking-wider text-black">Select Experience Level</label>
+                                                        <Select value={experienceLevel} onValueChange={setExperienceLevel}>
+                                                            <SelectTrigger className="h-12 rounded-none border-2 border-black font-bold uppercase shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all bg-white">
+                                                                <SelectValue placeholder="Select Level" />
+                                                            </SelectTrigger>
+                                                            <SelectContent className="rounded-none border-2 border-black font-bold uppercase">
+                                                                <SelectItem value="junior">Beginner</SelectItem>
+                                                                <SelectItem value="mid">Intermediate</SelectItem>
+                                                                <SelectItem value="senior">Advanced</SelectItem>
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </ul>
+                                    </div>
+                                    <div className="p-3 border-t-2 border-black bg-gray-50 flex-none text-center">
+                                        <a href="#" className="font-bold text-sm uppercase tracking-wider underline hover:text-[#ff0000]">
+                                            {activeTab === 'find-mentors' ? 'View All News →' : 'View All Topics →'}
+                                        </a>
+                                    </div>
                                 </div>
-                                <div className="p-3 border-t-2 border-black bg-gray-50 flex-none text-center">
-                                    <a href="#" className="font-bold text-sm uppercase tracking-wider underline hover:text-[#ff0000]">
-                                        {activeTab === 'find-mentors' ? 'View All News →' : 'View All Topics →'}
-                                    </a>
-                                </div>
-                            </div>
+                            )}
                         </div>
 
                         {/* RIGHT COLUMN: Content Area */}
@@ -718,7 +796,6 @@ export default function MentorConnect() {
 
                                             {/* Split Screen Video Area */}
                                             <div className="relative aspect-video flex bg-gray-900 border-b-2 border-white">
-                                                {/* Left: AI Avatar (Placeholder for now) */}
                                                 <div className="w-1/2 border-r-2 border-white relative flex items-center justify-center bg-gray-800">
                                                     <div className="text-center space-y-2 opacity-50">
                                                         <div className="h-16 w-16 mx-auto rounded-full bg-black border-2 border-white flex items-center justify-center">
@@ -726,7 +803,6 @@ export default function MentorConnect() {
                                                         </div>
                                                         <p className="text-[10px] font-mono text-white uppercase tracking-widest">AI Interviewer</p>
                                                     </div>
-                                                    {/* In future, LiveKit VideoTrack goes here */}
                                                 </div>
 
                                                 {/* Right: User Webcam */}
@@ -907,13 +983,13 @@ export default function MentorConnect() {
                         </div>
                     </div>
                 </Tabs>
-            </div>
+            </div >
             <BookingModal
                 isOpen={isBookingOpen}
                 onClose={() => setIsBookingOpen(false)}
                 mentor={selectedMentor}
                 onBookingComplete={() => setActiveTab('my-sessions')}
             />
-        </DashboardLayout>
+        </DashboardLayout >
     );
 }

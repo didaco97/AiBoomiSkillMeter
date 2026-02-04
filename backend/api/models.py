@@ -19,6 +19,7 @@ class LearnerProfile(models.Model):
     daily_study_time = models.IntegerField(default=30)  # Minutes per day
     phone_number = models.CharField(max_length=20, default='+919518380879', help_text="For WhatsApp notifications")
     onboarding_completed = models.BooleanField(default=False)
+    resume = models.FileField(upload_to='resumes/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -250,7 +250,7 @@ flowchart TD
 | **Twilio** | WhatsApp and SMS notifications |
 | **Gmail SMTP** | Email delivery |
 | **Piston API** | Code execution (12+ languages) |
-| **Beyond Presence** | AI avatar for mock interviews (planned) |
+
 | **LiveKit** | WebRTC video rooms (planned) |
 | **DiceBear** | Avatar generation |
 
@@ -503,7 +503,7 @@ backend/
 | `QuizGeneratorService` | Generates MCQ assessments |
 | `GeminiInterviewService` | Handles mock interview AI logic |
 | `LiveKitService` | Manages WebRTC video tokens |
-| `BeyondPresenceService` | AI avatar integration (planned) |
+
 
 ### Authentication System
 
@@ -1085,7 +1085,7 @@ Full-featured code editor supporting 12 programming languages.
 - [x] Add `InterviewSession` model
 - [x] Create `GeminiInterviewService` with persona
 - [x] Create `LiveKitService` for WebRTC tokens
-- [x] Create `BeyondPresenceService` for AI avatar
+
 - [x] Frontend: Create `useInterviewWebSocket` hook
 - [x] Frontend: Integrate WebSocket with simulator UI
 - [x] Refine AI system prompt for realistic interviews
@@ -1200,8 +1200,7 @@ LIVEKIT_API_KEY=your_livekit_key
 LIVEKIT_API_SECRET=your_livekit_secret
 LIVEKIT_URL=wss://your-livekit-server
 
-# Beyond Presence (Optional - for AI avatar)
-BEYOND_PRESENCE_API_KEY=your_bp_key
+
 ```
 
 ### Getting API Keys

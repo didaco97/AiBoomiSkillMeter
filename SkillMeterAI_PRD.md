@@ -1588,9 +1588,7 @@ def send_whatsapp(user, message):
 | GET | `/api/trending/` | Trending topics/courses |
 | GET | `/api/certificates/verify/{id}/` | Verify certificate |
 
-### 7.3 External Service Integration
-
-#### Google Gemini AI
+### 7.3Google Gemini AI
 
 **Model:** `gemini-3-flash-preview`
 
@@ -2002,7 +2000,6 @@ Warning: #EAB308 (Yellow)
 ### 10.2 Phase 2: AI Capabilities Expansion (Q3 2026)
 
 **AI Features:**
-- Beyond Presence integration for AI avatar interviews
 - Adaptive learning paths that adjust to performance
 - AI-powered doubt resolution chatbot
 - Personalized content recommendations engine
@@ -2150,8 +2147,7 @@ LIVEKIT_API_KEY=your_livekit_key_here
 LIVEKIT_API_SECRET=your_livekit_secret_here
 LIVEKIT_URL=wss://your-livekit-server
 
-# Beyond Presence (Optional)
-BEYOND_PRESENCE_API_KEY=your_bp_key_here
+
 
 # Django
 SECRET_KEY=your_django_secret_key_here
